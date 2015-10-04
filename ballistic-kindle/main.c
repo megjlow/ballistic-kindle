@@ -63,7 +63,7 @@ int main()
 	usleep(10000000);
 
 	err = hci_disconnect(device, handle, HCI_OE_USER_ENDED_CONNECTION, 10000);
-	fprintf(stdout, "%i\n", err);
+	fprintf(stdout, "hci_disconnect returns %i\n", err);
 
 	err = hci_close_dev(device);
 	fprintf(stdout, "%i\n", err);
