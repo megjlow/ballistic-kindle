@@ -66,7 +66,7 @@ int main()
 	fprintf(stdout, "hci_disconnect returns %i\n", err);
 
 	err = hci_close_dev(device);
-	fprintf(stdout, "%i\n", err);
+	fprintf(stdout, "hci_close_dev returns %i\n", err);
 
 	exit(0);
 }
