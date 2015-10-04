@@ -9,18 +9,6 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
 
-struct hci_request ble_hci_request(uint16_t ocf, int clen, void * status, void * cparam)
-{
-	struct hci_request rq;
-	memset(&rq, 0, sizeof(rq));
-	rq.ogf = OGF_LE_CTL;
-	rq.ocf = ocf;
-	rq.cparam = cparam;
-	rq.clen = clen;
-	rq.rparam = status;
-	rq.rlen = 1;
-	return rq;
-}
 
 int main()
 {
