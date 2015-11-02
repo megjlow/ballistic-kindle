@@ -1,62 +1,120 @@
-
+#include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
-#include <curses.h>
 #include <unistd.h>
-#include <sys/ioctl.h>
+#include <string.h>
+#include <stdint.h>
 #include <sys/socket.h>
-#include <bluetooth/bluetooth.h>
-#include <bluetooth/hci.h>
-#include <bluetooth/hci_lib.h>
+#include <netinet/in.h>
 
+#include "client.h"
+
+int main() {
+	int serverSocket;
+	int serverPort = 5000;
+	struct sockaddr_in serv_addr;
+	int err;
+
+	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+
+	memset(&serv_addr, '0', sizeof(serv_addr));
+
+	serv_addr.sin_family = AF_INET;
+	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	serv_addr.sin_port = htons(serverPort);
+
+	err = bind(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr));
+	if(err < 0) {
+		printf("failed to bind server socket on port %i\n", err);
+	}
+
+	err = listen(serverSocket, 10);
+
+	// should now have a server socket listening on port 5000
+
+	if(err < 0) {
+		printf("listen failed %i\n", err);
+	}
+
+	while(1) {
+		struct sockaddr_in client_addr;
+
+		// wait for a connection
+		socklen_t client_len = sizeof(client_addr);
+		int client = accept(serverSocket, (struct sockaddr*)&client_addr, &client_len);
+
+		if(fork() == 0) {
+			// child process -
+			processRequest(client, client_addr);
+			exit(0);
+		}
+		else {
+			// parent process, we're done here
+			close(client);
+		}
+
+	}
+}
+
+/*
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <stdio.h>
+#include <netinet/in.h>
+#include <signal.h>
+#include <unistd.h>
 
 int main()
 {
-	//bdaddr_t src_addr, dst_addr;
-	const int device = hci_open_dev(hci_get_route(NULL));
-	if ( device < 0 ) {
-		perror("Failed to open HCI device.");
-		return 0;
-	}
+int server_sockfd, client_sockfd;
+int server_len, client_len;
+struct sockaddr_in server_address;
+struct sockaddr_in client_address;
 
-	bdaddr_t bdaddr;
-	uint16_t handle;
-	uint16_t interval, latency, max_ce_length, max_interval, min_ce_length;
-	uint16_t min_interval, supervision_timeout, window;
-	uint8_t initiator_filter, own_bdaddr_type, peer_bdaddr_type;
+server_sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
-	own_bdaddr_type = LE_PUBLIC_ADDRESS;
-	peer_bdaddr_type = LE_PUBLIC_ADDRESS;
+server_address.sin_family = AF_INET;
+server_address.sin_addr.s_addr = htonl(INADDR_ANY);
+server_address.sin_port = htons(9734);
+server_len = sizeof(server_address);
+bind(server_sockfd, (struct sockaddr *)&server_address,server_len);
 
-	str2ba("D0:39:72:C4:DC:A5", &bdaddr);
+// Create a connection queue, ignore child exit details and wait for clients.
 
-	interval = htobs(0x0004);
-	window = htobs(0x0004);
-	initiator_filter = 0;
-	min_interval = htobs(0x000F);
-	max_interval = htobs(0x000F);
-	latency = htobs(0x0000);
-	supervision_timeout = htobs(0x0C80);
-	min_ce_length = htobs(0x0000);
-	max_ce_length = htobs(0x0000);
+listen(server_sockfd, 5);
 
-	int err = hci_le_create_conn(device, interval, window, initiator_filter, peer_bdaddr_type, bdaddr,
-			own_bdaddr_type, min_interval, max_interval, latency, supervision_timeout, min_ce_length, max_ce_length, &handle, 25000);
+signal(SIGCHLD, SIG_IGN);
 
-	if (err < 0) {
-		perror("Could not create connection");
-		exit(1);
-	}
+while(1) {
+char ch;
 
-	usleep(10000000);
+printf("server waiting\n");
 
-	err = hci_disconnect(device, handle, HCI_OE_USER_ENDED_CONNECTION, 10000);
-	fprintf(stdout, "hci_disconnect returns %i\n", err);
+//Accept connection.
 
-	err = hci_close_dev(device);
-	fprintf(stdout, "hci_close_dev returns %i\n", err);
+client_len = sizeof(client_address);
+client_sockfd = accept(server_sockfd,(struct sockaddr *)&client_address, &client_len);
 
-	exit(0);
+// Fork to create a process for this client and perform a test to see
+//whether we're the parent or the child.
+
+if(fork() == 0) {
+
+// If we're the child, we can now read/write to the client on
+//client_sockfd. The five second delay is just for this demonstration.
+
+read(client_sockfd, &ch, 1);
+sleep(5);
+ch++;
+write(client_sockfd, &ch, 1);
+close(client_sockfd);
+exit(0);
 }
 
+// Otherwise, we must be the parent and our work for this client is finished.
 
+else {
+close(client_sockfd);
+}
+}
+}
+ */
