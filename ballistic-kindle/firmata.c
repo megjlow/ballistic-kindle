@@ -5,6 +5,7 @@
 #include	<string.h>
 #include	<stdlib.h>
 #include	<stdio.h>
+#include	<unistd.h>
 
 t_firmata	*firmata_new(char *name)
 {
@@ -50,7 +51,6 @@ int		firmata_pull(t_firmata *firmata)
 		int nbytes = serial_read(firmata->serial, buffer, sizeof(buffer));
 
 		for(int i=3; i<nbytes; i++) {
-			printf("%x\n", buffer[i]);
 			buff[count] = buffer[i];
 			count++;
 		}
@@ -234,7 +234,7 @@ void		firmata_initPins(t_firmata *firmata)
 int		firmata_askFirmware(t_firmata *firmata)
 {
   //uint8_t	buf[3];
-	uint8_t buf[6] = {0x12, 0x25, 0x00, FIRMATA_START_SYSEX, FIRMATA_REPORT_FIRMWARE, FIRMATA_END_SYSEX, 0x00};
+	uint8_t buf[7] = {0x12, 0x25, 0x00, FIRMATA_START_SYSEX, FIRMATA_REPORT_FIRMWARE, FIRMATA_END_SYSEX, 0x00};
   int		res;
 
   /*
@@ -242,7 +242,7 @@ int		firmata_askFirmware(t_firmata *firmata)
   buf[1] = FIRMATA_REPORT_FIRMWARE; // read firmata name & version                     
   buf[2] = FIRMATA_END_SYSEX;
   */
-  res = serial_write(firmata->serial, buf, 6);
+  res = serial_write(firmata->serial, buf, sizeof(buf));
   return (res);
 }
 
@@ -268,7 +268,7 @@ int		firmata_analogWrite(t_firmata *firmata, int pin, int value)
 {
   int		res;
 
-  uint8_t buff[3] = { 0x12, 0x25, 0x00, 0xE0 | pin, value & 0x7F, (value >> 7) & 0x7F, 0x00 };
+  uint8_t buff[7] = { 0x12, 0x25, 0x00, 0xE0 | pin, value & 0x7F, (value >> 7) & 0x7F, 0x00 };
   printf("Writting analogWrite at: %i with value: %i\n", pin, value);
   /*
   buff[0] = 0x12;

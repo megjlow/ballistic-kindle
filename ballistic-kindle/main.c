@@ -21,7 +21,7 @@ void error(const char *msg)
 
 
 int main() {
-	key_t shMemId;
+	//key_t shMemId;
 	int serverSocket;
 	int serverPort = 5000;
 	struct sockaddr_in serv_addr;

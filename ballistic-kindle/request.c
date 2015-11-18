@@ -86,7 +86,7 @@ void processRequest(char* input) {
 					firmata_digitalWrite(firmata, atoi(cmd[1]), HIGH);
 				}
 				else {
-					firmata_digitalWrite(firmata, cmd[1], LOW);
+					firmata_digitalWrite(firmata, atoi(cmd[1]), LOW);
 				}
 				firmata_end(firmata);
 
