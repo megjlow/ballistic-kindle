@@ -46,7 +46,8 @@ char** tokeniseString(char* input, char* separator) {
 
 
 void freeTokens(char** tokens) {
-	for(int i=0; tokens[i] != NULL; i++) {
+	int i = 0;
+	for(i=0; tokens[i] != NULL; i++) {
 		free(tokens[i]);
 	}
 	free(tokens);
@@ -55,8 +56,9 @@ void freeTokens(char** tokens) {
 
 
 void processRequest(char* input) {
+	int i =0;
 	char** header = tokeniseString(input, "\r\n");
-	for(int i=0; header[i] != NULL; i++) {
+	for(i=0; header[i] != NULL; i++) {
 		// find the get header, it's got /beetleaddress/pin/setting in it
 		if(strncmp("GET", header[i], strlen("GET")) == 0) {
 			char** url = tokeniseString(header[i], " ");
