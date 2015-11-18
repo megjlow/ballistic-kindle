@@ -44,13 +44,14 @@ int		firmata_pull(t_firmata *firmata)
   int		r;
   uint8_t buffer[300];
   int count = 0;
+  int i;
 
   r = serial_waitInput(firmata->serial, 40);
   if (r > 0) {
 	  while(1) {
 		int nbytes = serial_read(firmata->serial, buffer, sizeof(buffer));
 
-		for(int i=3; i<nbytes; i++) {
+		for(i=3; i<nbytes; i++) {
 			buff[count] = buffer[i];
 			count++;
 		}
