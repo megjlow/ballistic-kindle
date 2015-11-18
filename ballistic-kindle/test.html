@@ -1,0 +1,31 @@
+<html>
+	<head>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				
+				$('#on').on('click', function(e) {
+					e.preventDefault();
+					$.getJSON("http://localhost:5000/D0:39:72:C4:DC:A5/13/1", 
+						function(data){
+     					// Handles the callback when the data returns
+					});
+				});
+				
+				$('#off').on('click', function(e) {
+					e.preventDefault();
+					$.getJSON("http://localhost:5000/D0:39:72:C4:DC:A5/13/0", 
+						function(data){
+     					// Handles the callback when the data returns
+					});
+				});
+
+				
+			});
+		</script>
+	</head>
+	<body>
+		<a href="javascript:void(0);" id="on">On</a>
+		<a href="javascript:void(0);" id="off">Off</a>
+	</body>
+</html>
