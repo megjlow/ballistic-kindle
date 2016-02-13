@@ -77,7 +77,7 @@ void processRequest(char* input) {
 					printf("value %s\n", cmd[2]);
 				}
 
-				t_firmata     *firmata;
+				t_firmata *firmata;
 
 				firmata = firmata_new(cmd[0]);
 				while(!firmata->isReady) { //Wait until device is up
@@ -90,7 +90,7 @@ void processRequest(char* input) {
 				else {
 					firmata_digitalWrite(firmata, atoi(cmd[1]), LOW);
 				}
-				firmata_end(firmata);
+				//firmata_end(firmata);
 
 				freeTokens(cmd);
 			}

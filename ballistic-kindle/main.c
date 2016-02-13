@@ -22,21 +22,24 @@ void error(const char *msg)
 
 int main() {
 	//key_t shMemId;
+	char* shMemKey = "beetles";
 	int serverSocket;
 	int serverPort = 5000;
 	struct sockaddr_in serv_addr;
 	int err;
+
 	/*
-	socket_t *sockets;
+	struct socket_t *sockets;
 
 	// bluetooth socket storage in shared memory, for the moment assign enough memory for 10
-	shMemId = shmget(shMemKey, 10 * sizeof(socket_t), IPC_CREAT | 0666);
+	shMemId = shmget(shMemKey, 10 * sizeof(struct socket_t), IPC_CREAT | 0666);
 	if(shMemId < 0) {
 		// oops
 	}
 	int* shm = shmat(shMemId, NULL, 0);
 	sockets = (struct socket_t*)shm;
 	*/
+
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 	memset(&serv_addr, '0', sizeof(serv_addr));
